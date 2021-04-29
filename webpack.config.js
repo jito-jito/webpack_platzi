@@ -6,6 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
+const CopyPlugin = require('copy-webpack-plugin')
+
 // objeto a exportar con la configuración de webpack
 module.exports = {
     //punto de entrada para webpack
@@ -43,7 +45,12 @@ module.exports = {
                 use: [MiniCssExtractPlugin.loader,
                 'css-loader',
                 'stylus-loader']
+            },
+            {
+                test:  /\.png/,
+                type: 'asset/resource'
             }
+
         ]
     },
     plugins: [
@@ -58,6 +65,17 @@ module.exports = {
             filename: './index.html'
         }),
         new MiniCssExtractPlugin(),
+        new CopyPlugin({
+            //configuracion para decir que archivos vamos a copiar
+            patterns: [
+                {
+                    // ruta con los archivos a copiar
+                    from: path.resolve(__dirname, "src", "assets/images"),
+                    // ruta para dejar los archivos copiados
+                    to: "assets/images"
+                }
+            ]
+        })
 
     ]
 }
