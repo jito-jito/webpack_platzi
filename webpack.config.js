@@ -4,6 +4,8 @@ const path = require('path')
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
 // objeto a exportar con la configuración de webpack
 module.exports = {
     //punto de entrada para webpack
@@ -35,6 +37,12 @@ module.exports = {
                 use: {
                     loader: "babel-loader"
                 }
+            },
+            {
+                test: /\.css|.styl$/i,
+                use: [MiniCssExtractPlugin.loader,
+                'css-loader',
+                'stylus-loader']
             }
         ]
     },
@@ -48,6 +56,8 @@ module.exports = {
             template: './public/index.html',
             // archivo para escribir el html, pordefecto es index.html
             filename: './index.html'
-        })
+        }),
+        new MiniCssExtractPlugin(),
+
     ]
 }
