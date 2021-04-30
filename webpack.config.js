@@ -8,6 +8,11 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const CopyPlugin = require('copy-webpack-plugin')
 
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+
+const TerserPlugin = require('terser-webpack-plugin')
+
+
 // objeto a exportar con la configuración de webpack
 module.exports = {
     //punto de entrada para webpack
@@ -17,7 +22,9 @@ module.exports = {
         // dirección para guardar el archivo de salida
         path: path.resolve(__dirname, 'dist'),
         // nombre del archivo de salida
-        filename: 'main.js',
+        filename: '[name].[contenthash].js',
+        // para agregar las imagenes que vienen de webpack en otro directorio
+        assetModuleFilename: "assets/images/[hash][ext][query]"
     },
     //configuraciones a utilizar
     resolve: {
@@ -49,6 +56,30 @@ module.exports = {
             {
                 test:  /\.png/,
                 type: 'asset/resource'
+            },
+            {
+                test:  /\.(woff|woff2)$/,
+                use: {
+                    loader: 'url-loader',
+                    options: {
+                        // Habilita o deshabilita la transformación de archivos en base64.
+                        limit: 10000,
+                        // Especifica el tipo MIME con el que se alineará el archivo. 
+                        // Los MIME Types (Multipurpose Internet Mail Extensions)
+                        // son la manera standard de mandar contenido a través de la red.
+                        mimetype: "application/font-woff",
+                        // EL NOMBRE INICIAL DEL ARCHIVO + SU EXTENSIÓN
+                        // PUEDES AGREGARLE [name]hola.[ext] y el output del archivo seria 
+                        // ubuntu-regularhola.woff
+                        name: "[name].[contenthash].[ext]",
+                        // EL DIRECTORIO DE SALIDA (SIN COMPLICACIONES)
+                        outputPath: "./assets/fonts/",
+                        // EL DIRECTORIO PUBLICO (SIN COMPLICACIONES)
+                        publicPath:  "./assets/fonts/",
+                        // AVISAR EXPLICITAMENTE SI ES UN MODULO
+                        esModule: false,
+                    }
+                }
             }
 
         ]
@@ -64,7 +95,9 @@ module.exports = {
             // archivo para escribir el html, pordefecto es index.html
             filename: './index.html'
         }),
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+            filename: 'assets/[name].[contenthash].css'
+        }),
         new CopyPlugin({
             //configuracion para decir que archivos vamos a copiar
             patterns: [
@@ -76,6 +109,12 @@ module.exports = {
                 }
             ]
         })
-
-    ]
+    ],
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new CssMinimizerPlugin(),
+            new TerserPlugin(),
+        ] 
+    }
 }
