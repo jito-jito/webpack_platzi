@@ -5,6 +5,7 @@ import '@styles/vars.styl';
 
 
 console.log('hola');
+console.log('hola');
 
 (async function App() {
   const main = null || document.getElementById('main');

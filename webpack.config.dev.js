@@ -8,16 +8,10 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const CopyPlugin = require('copy-webpack-plugin')
 
-// para comprimir archivos css
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-// para comprimir archivos javascript
-const TerserPlugin = require('terser-webpack-plugin')
-
 // para variables de entorno
 const Dotenv = require('dotenv-webpack')
 
 
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 
 // objeto a exportar con la configuración de webpack
@@ -32,7 +26,11 @@ module.exports = {
         filename: '[name].[contenthash].js',
         // para agregar las imagenes que vienen de asset module en la dirección indicada
         assetModuleFilename: "assets/images/[hash][ext][query]"
-    },    
+    },
+    // para ser más especifico en el modo de webpack a ejecutar
+    mode: 'development',
+    // para activar el modo watch
+    watch: true,
     //configuraciones a utilizar
     resolve: {
         //extenciones a trabajar
@@ -125,16 +123,6 @@ module.exports = {
                 }
             ]
         }),
-        new Dotenv(),
-        new CleanWebpackPlugin()
-    ],
-    optimization: {
-        // para habilitar la funcion de compresion en modo de desarrollo
-        minimize: true,
-        // para agregar los plugins que comprimen archivos
-        minimizer: [
-            new CssMinimizerPlugin(),
-            new TerserPlugin(),
-        ] 
-    }
+        new Dotenv()
+    ]
 }
